@@ -1,24 +1,25 @@
 use borsh::{BorshDeserialize, BorshSerialize};
-
 use solana_program::{
-    account_info::AccountInfo, entrypoint, entrypoint::ProgramResult, program::invoke,
-    program_error::ProgramError, pubkey::Pubkey, system_instruction,
+    account_info::AccountInfo, entrypoint, entrypoint::ProgramResult,
+    example_mocks::solana_sdk::system_instruction, program::invoke, program_error::ProgramError,
+    pubkey::Pubkey,
 };
+
 entrypoint!(process_instruction);
 
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(BorshSerialize, BorshDeserialize)]
+pub struct NameAccount {
+    pub name: String,
+}
+
+#[derive(BorshSerialize, BorshDeserialize)]
 pub enum NameInstruction {
     Initialize(String),
     Update(String),
 }
 
-#[derive(BorshDeserialize, BorshSerialize)]
-pub struct NameAccount {
-    pub name: String,
-}
-
-pub fn process_instruction(
-    _program_id: &Pubkey,
+fn process_instruction(
+    program_id: &Pubkey,
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
@@ -33,7 +34,7 @@ pub fn process_instruction(
                 name_account.key,
                 1000000000,
                 82,
-                _program_id,
+                program_id,
             );
             invoke(
                 &create_ix,
@@ -43,6 +44,7 @@ pub fn process_instruction(
                     system_program_info.clone(),
                 ],
             )?;
+
             let name_account_data = NameAccount { name };
             name_account_data.serialize(&mut *name_account.data.borrow_mut())?;
         }
@@ -55,3 +57,4 @@ pub fn process_instruction(
 
     Ok(())
 }
+
