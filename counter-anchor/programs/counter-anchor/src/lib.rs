@@ -12,19 +12,44 @@ pub mod counter_anchor {
         new_account.count = 0;
         Ok(())
     }
+
+    pub fn increment(ctx: Context<Increment>) -> Result<()> {
+        ctx.accounts.new_account.count = ctx
+            .accounts
+            .new_account
+            .count
+            .checked_add(1)
+            .ok_or(ErrorCode::Overflow)?;
+
+        Ok(())
+    }
+
+    pub fn decrement(ctx: Context<Decrement>) -> Result<()> {
+        ctx.accounts.new_account.count = ctx
+            .accounts
+            .new_account
+            .count
+            .checked_sub(1)
+            .ok_or(ErrorCode::Underflow)?;
+        Ok(())
+    }
+
+    pub fn reset(ctx: Context<Reset>) -> Result<()> {
+        ctx.accounts.new_account.count = 0;
+        Ok(())
+    }
 }
 
 #[account]
-pub struct AccountInstruction {
+pub struct AccountInstructions {
     pub owner: Pubkey,
     pub count: u64,
 }
 
 #[derive(Accounts)]
 pub struct Initialize<'info> {
-    #[account(init, payer=signer, space = 8+8)]
-    pub new_account: Account<'info, AccountInstruction>,
-
+    #[account(init, payer=signer , space = 8+32+8)]
+    pub new_account: Account<'info, AccountInstructions>,
     #[account(mut)]
     pub signer: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -32,14 +57,31 @@ pub struct Initialize<'info> {
 
 #[derive(Accounts)]
 pub struct Increment<'info> {
-    #[account(mut, has_one = owner @ ErrorCode::Unauthorized)]
-    pub new_account: Account<'info, AccountInstruction>,
+    #[account(mut, has_one= owner @ErrorCode::Unauthorized)]
+    pub new_account: Account<'info, AccountInstructions>,
+    pub owner: Signer<'info>,
+}
 
+#[derive(Accounts)]
+pub struct Decrement<'info> {
+    #[account(mut, has_one = owner @ErrorCode::Unauthorized)]
+    pub new_account: Account<'info, AccountInstructions>,
+    pub owner: Signer<'info>,
+}
+
+#[derive(Accounts)]
+pub struct Reset<'info> {
+    #[account(mut, has_one= owner @ErrorCode::Unauthorized)]
+    pub new_account: Account<'info, AccountInstructions>,
     pub owner: Signer<'info>,
 }
 
 #[error_code]
 pub enum ErrorCode {
-    #[msg("you are not authorized to perform this action")]
+    #[msg("you are not authorized to perform this action ")]
     Unauthorized,
+    #[msg("overflowed cant add")]
+    Overflow,
+    #[msg("underflowed cant sub")]
+    Underflow,
 }
