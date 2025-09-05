@@ -20,7 +20,6 @@ pub mod counter_anchor {
             .count
             .checked_add(1)
             .ok_or(ErrorCode::Overflow)?;
-
         Ok(())
     }
 
@@ -48,7 +47,7 @@ pub struct AccountInstructions {
 
 #[derive(Accounts)]
 pub struct Initialize<'info> {
-    #[account(init, payer=signer , space = 8+32+8)]
+    #[account(init, payer = signer, space = 8 + 32 + 8)]
     pub new_account: Account<'info, AccountInstructions>,
     #[account(mut)]
     pub signer: Signer<'info>,
@@ -57,31 +56,31 @@ pub struct Initialize<'info> {
 
 #[derive(Accounts)]
 pub struct Increment<'info> {
-    #[account(mut, has_one= owner @ErrorCode::Unauthorized)]
+    #[account(mut, has_one = owner @ ErrorCode::Unauthorized)]
     pub new_account: Account<'info, AccountInstructions>,
     pub owner: Signer<'info>,
 }
 
 #[derive(Accounts)]
 pub struct Decrement<'info> {
-    #[account(mut, has_one = owner @ErrorCode::Unauthorized)]
+    #[account(mut, has_one = owner @ ErrorCode::Unauthorized)]
     pub new_account: Account<'info, AccountInstructions>,
     pub owner: Signer<'info>,
 }
 
 #[derive(Accounts)]
 pub struct Reset<'info> {
-    #[account(mut, has_one= owner @ErrorCode::Unauthorized)]
+    #[account(mut, has_one = owner @ ErrorCode::Unauthorized)]
     pub new_account: Account<'info, AccountInstructions>,
     pub owner: Signer<'info>,
 }
 
 #[error_code]
 pub enum ErrorCode {
-    #[msg("you are not authorized to perform this action ")]
+    #[msg("You are not authorized to perform this action")]
     Unauthorized,
-    #[msg("overflowed cant add")]
+    #[msg("Overflow: cannot add")]
     Overflow,
-    #[msg("underflowed cant sub")]
+    #[msg("Underflow: cannot subtract")]
     Underflow,
 }
