@@ -12,7 +12,7 @@ counter_anchor = "5Wnpeo6hA75WGacPT9THrf1GFYsUky5JnEfh2b91tgkc"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
