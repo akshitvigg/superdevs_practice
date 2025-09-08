@@ -51,7 +51,7 @@ function App() {
   }
 
   return (
-    <div className=" p-20" >
+    <div className=" text-2xl min-h-screen flex justify-center items-center" >
 
       {!publicKey ? (
         <button onClick={() => "connect wallet using phantom wallet at top"}>Connect Wallet</button>
