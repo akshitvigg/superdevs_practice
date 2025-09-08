@@ -13,7 +13,7 @@ function App() {
   const [account, setAccount] = useState<web3.PublicKey | null>(null)
 
   const getProvider = () => {
-    const connection = new web3.Connection("https://api.devnet.solana.com")
+    const connection = new web3.Connection("https://api.testnet.solana.com")
     return new AnchorProvider(connection, wallet!, { preflightCommitment: "processed" })
   }
 
