@@ -3,6 +3,7 @@ import "./App.css";
 import idl from "../../target/idl/counter_anchor.json";
 import { useAnchorWallet, useWallet } from "@solana/wallet-adapter-react";
 import { useState } from "react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const programID = new web3.PublicKey("5Wnpeo6hA75WGacPT9THrf1GFYsUky5JnEfh2b91tgkc");
 
@@ -13,7 +14,12 @@ function App() {
   const [account, setAccount] = useState<web3.PublicKey | null>(null)
 
   const getProvider = () => {
-    const connection = new web3.Connection("https://api.testnet.solana.com")
+    const connection = new web3.Connection("https://api.devnet.solana.com")
+
+    if (!wallet) {
+      console.log("wallet not connected")
+    }
+
     return new AnchorProvider(connection, wallet!, { preflightCommitment: "processed" })
   }
 
@@ -54,7 +60,7 @@ function App() {
     <div className=" text-2xl min-h-screen flex justify-center items-center" >
 
       {!publicKey ? (
-        <button onClick={() => "connect wallet using phantom wallet at top"}>Connect Wallet</button>
+        <WalletMultiButton />
       ) : <div>
         <button onClick={initCounter}>Initialize Counter</button>
         <button onClick={increment} disabled={!account}> increment</button>
