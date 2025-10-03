@@ -1,4 +1,5 @@
-use actix_web::{App, HttpServer, Responder, delete, get, post};
+use actix_web::{App, HttpResponse, HttpServer, Responder, delete, get, post, web::Json};
+use serde::{Deserialize, Serialize};
 #[actix_web::main]
 async fn main() -> Result<(), std::io::Error> {
     HttpServer::new(move || {
@@ -12,9 +13,30 @@ async fn main() -> Result<(), std::io::Error> {
     .await
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+struct CreateOrderSchema {
+    price: u32,
+    quantity: u32,
+    user_id: u32,
+    side: Side,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+enum Side {
+    Buy,
+    Sell,
+}
+
 #[post("/order")]
-async fn create_order() -> impl Responder {
-    "hello Akshit"
+async fn create_order(body: Json<CreateOrderSchema>) -> impl Responder {
+    println!("{:?}", body);
+    // let b = CreateOrderSchema {
+    //     price: 12,
+    //     quantity: 20,
+    //     user_id: 3,
+    //     side: Side::Buy,
+    // };
+    return HttpResponse::Ok().json("hello u got this ");
 }
 
 #[delete("/order")]
